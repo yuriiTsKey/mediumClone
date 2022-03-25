@@ -4,12 +4,16 @@ if(!process.env.IS_TS_NODE){
 
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { ConfigService } from '@nestjs/config';
 
-const port = 5001;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
+  const port = configService.get('PORT');
   await app.listen(port);
+
+
   console.log(`Server run on port:${port}`);
 }
 bootstrap();
