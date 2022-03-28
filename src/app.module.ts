@@ -5,16 +5,18 @@ import { AppController } from '@app/app.controller';
 import { AppService } from '@app/app.service';
 import { TagModule } from '@app/tag/tag.module';
 
-import ormconfig from '@app/ormconfig'
+import ormconfig from '@app/ormconfig';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(ormconfig),
-    TagModule, 
+    TagModule,
+    UserModule,
     ConfigModule.forRoot({
-    isGlobal: true,
-  })
-],
+      isGlobal: true,
+    }),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
