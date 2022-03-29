@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { getConnection, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/createUser.dto';
 import { UserEntity } from './user.entity';
 import { LoginUserDto } from './dto/loginUser.dto';
@@ -9,6 +9,7 @@ import { UserResponseInterface } from './types/userResponse.interface';
 import { sign } from 'jsonwebtoken';
 import { JWT_SECRET } from '@app/config';
 import { compare } from 'bcrypt';
+import { UpdateUserDto } from './dto/updateUser.dto';
 
 @Injectable()
 export class UserService {
@@ -68,6 +69,19 @@ export class UserService {
     delete currentUser.password;
 
     return currentUser;
+  }
+
+  async changeUser(
+    currentUserId: number,
+    updateUserDto: UpdateUserDto,
+  ): Promise<UserEntity> {
+    const user = await this.findById(currentUserId);
+    Object.assign(user, updateUserDto);
+    return await this.userRepository.save(user);
+  }
+
+  findById(id: number): Promise<UserEntity> {
+    return this.userRepository.findOne(id);
   }
 
   generateJwt(user: UserEntity): string {
