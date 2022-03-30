@@ -29,7 +29,7 @@ export class UserEntity {
   password: string;
 
   @OneToMany(() => ArticleEntity, (article) => article.author)
-  article: ArticleEntity[];
+  articles: ArticleEntity[];
 
   @BeforeInsert()
   async hashPassword() {

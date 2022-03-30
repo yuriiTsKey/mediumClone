@@ -46,6 +46,7 @@ export class UserService {
       },
       { select: ['id', 'username', 'email', 'bio', 'password', 'image'] },
     );
+    console.log(currentUser);
 
     if (!currentUser) {
       throw new HttpException(
