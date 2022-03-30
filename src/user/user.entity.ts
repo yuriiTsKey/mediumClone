@@ -28,7 +28,7 @@ export class UserEntity {
   @Column({ select: false })
   password: string;
 
-  @OneToMany(() => ArticleEntity, (article) => article.user)
+  @OneToMany(() => ArticleEntity, (article) => article.author)
   article: ArticleEntity[];
 
   @BeforeInsert()
