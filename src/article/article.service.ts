@@ -19,6 +19,8 @@ export class ArticleService {
   constructor(
     @InjectRepository(ArticleEntity)
     private readonly articleRepository: Repository<ArticleEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
   ) {}
 
   async getAllArticle(currentUserId: number, query: any): Promise<any> {
@@ -28,6 +30,15 @@ export class ArticleService {
 
     queryBuilder.orderBy('articles.createdAt', 'DESC');
     const articleCount = await queryBuilder.getCount();
+
+    if (query.author) {
+      const author = await this.userRepository.findOne({
+        username: query.author,
+      });
+      queryBuilder.andWhere('articles.authorId = :id', {
+        id: author.id,
+      });
+    }
 
     if (query.limit) {
       queryBuilder.limit(query.limit);

@@ -15,7 +15,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { DeleteResult } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { ArticleEntity } from './article.entity';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/createArticle.dto';
@@ -28,7 +28,7 @@ export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
   @Get()
-  @UseGuards()
+  // @UseGuards()
   async findAllArticle(
     @UserDecorator('id') currentUserId: number,
     @Query() query: any,
