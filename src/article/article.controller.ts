@@ -54,7 +54,10 @@ export class ArticleController {
 
   @Post(':slug')
   @UseGuards(AuthGuard)
-  async updateUrticle(): Promise<any> {
+  async updateUrticle(
+    @UserDecorator('id') currentUserId: number,
+    @Param('slug') slug: string,
+  ): Promise<any> {
     return this.articleService.updateArticle();
   }
 
