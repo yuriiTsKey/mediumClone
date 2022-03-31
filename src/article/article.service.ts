@@ -40,6 +40,12 @@ export class ArticleService {
       });
     }
 
+    if (query.tag) {
+      queryBuilder.andWhere('articles.tagList LIKE :tag', {
+        tag: `%${query.tag}%`,
+      });
+    }
+
     if (query.limit) {
       queryBuilder.limit(query.limit);
     }
