@@ -11,6 +11,7 @@ import { ArticleEntity } from './article.entity';
 import { CreateArticleDto } from './dto/createArticle.dto';
 import slugify from 'slugify';
 import { ArticleResponseInterface } from './types/articleResponse.interface';
+import { UpdateArticleDto } from './dto/updateArticle.dto';
 
 @Injectable()
 export class ArticleService {
@@ -29,13 +30,9 @@ export class ArticleService {
     if (!article.tagList) {
       article.tagList = [];
     }
-    article.slug = this.processSlugUnique(article.title);
-
-    try {
-      await this.getArticleBySlug(article.slug);
-    } catch (err) {
-      throw new Error('This slug just already exist');
-    }
+    const randomSlug = this.processSlugUnique(article.title);
+    this.checkArticleIfExistBySlug(randomSlug);
+    article.slug = randomSlug;
 
     article.author = currentUser;
 
@@ -46,13 +43,25 @@ export class ArticleService {
     const articleFinded = await this.articleRepository.findOne({
       slug: slugArticle,
     });
-    if (articleFinded) {
-      return articleFinded;
+    return articleFinded;
+  }
+
+  async checkArticleIfExistBySlug(slugArticle: string): Promise<any> {
+    try {
+      const slugObjInDb = await this.articleRepository.findOne({
+        slug: slugArticle,
+      });
+      if (slugObjInDb.slug != slugArticle) {
+        return '';
+      } else {
+        throw new HttpException(
+          'This article has already registered',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    } catch (err) {
+      return '';
     }
-    throw new HttpException(
-      'this article not exist in db',
-      HttpStatus.FAILED_DEPENDENCY,
-    );
   }
 
   async deleteArticle(
@@ -73,8 +82,26 @@ export class ArticleService {
     return await this.articleRepository.delete({ slug: slugArticle });
   }
 
-  async updateArticle(): Promise<any> {
-    return 'updated';
+  async updateArticle(
+    slug: string,
+    currentUserId: number,
+    updateDtoArticle: UpdateArticleDto,
+  ): Promise<ArticleEntity> {
+    const article = await this.getArticleBySlug(slug);
+    if (!article) {
+      throw new HttpException('Article does not exist', HttpStatus.NOT_FOUND);
+    }
+
+    if (article.author.id != currentUserId) {
+      throw new HttpException(
+        'You are not author ot this article',
+        HttpStatus.I_AM_A_TEAPOT,
+      );
+    }
+    console.log(updateDtoArticle);
+    Object.assign(article, updateDtoArticle);
+    console.log(article);
+    return await this.articleRepository.save(article);
   }
 
   buildArticleResponse(article: ArticleEntity) {

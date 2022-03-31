@@ -8,6 +8,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -15,6 +16,7 @@ import {
 import { DeleteResult } from 'typeorm';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/createArticle.dto';
+import { UpdateArticleDto } from './dto/updateArticle.dto';
 import { ArticleResponseInterface } from './types/articleResponse.interface';
 
 @Controller('articles')
@@ -22,6 +24,7 @@ export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
   @Post('create')
+  @UsePipes(new ValidationPipe())
   @UseGuards(AuthGuard)
   async createArticle(
     @UserDecorator() currentUser: UserEntity,
@@ -52,13 +55,19 @@ export class ArticleController {
     return this.articleService.deleteArticle(slug, currentUserId);
   }
 
-  @Post(':slug')
+  @Put(':slug')
   @UseGuards(AuthGuard)
-  async updateUrticle(
+  async updateArticle(
     @UserDecorator('id') currentUserId: number,
     @Param('slug') slug: string,
-  ): Promise<any> {
-    return this.articleService.updateArticle();
+    @Body() updateDtoArticle: UpdateArticleDto,
+  ): Promise<ArticleResponseInterface> {
+    const article = await this.articleService.updateArticle(
+      slug,
+      currentUserId,
+      updateDtoArticle,
+    );
+    return this.articleService.buildArticleResponse(article);
   }
 
   @Get('slug')
