@@ -83,6 +83,12 @@ export class ArticleController {
     return this.articleService.buildArticleResponse(article);
   }
 
+  @Post(':slug/favorites')
+  @UseGuards(AuthGuard)
+  async addArticleToFavorite(@Param('slug') slug: string): Promise<any> {
+    return 'yes';
+  }
+
   @Get('slug')
   getSlug() {
     return this.articleService.processSlugUnique('Stringa');

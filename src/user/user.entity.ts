@@ -42,5 +42,3 @@ export class UserEntity {
   @JoinTable()
   favorites: ArticleEntity[];
 }
-
-// TODO: lkjasdlfjasd
