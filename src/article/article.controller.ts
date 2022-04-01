@@ -28,7 +28,7 @@ export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
   @Get()
-  // @UseGuards()
+  @UseGuards(AuthGuard)
   async findAllArticle(
     @UserDecorator('id') currentUserId: number,
     @Query() query: any,
@@ -71,8 +71,8 @@ export class ArticleController {
   @Put(':slug')
   @UseGuards(AuthGuard)
   async updateArticle(
-    @UserDecorator('id') currentUserId: number,
     @Param('slug') slug: string,
+    @UserDecorator('id') currentUserId: number,
     @Body() updateDtoArticle: UpdateArticleDto,
   ): Promise<ArticleResponseInterface> {
     const article = await this.articleService.updateArticle(
@@ -85,6 +85,6 @@ export class ArticleController {
 
   @Get('slug')
   getSlug() {
-    return this.articleService.processSlugUnique('new-yourk-some');
+    return this.articleService.processSlugUnique('Stringa');
   }
 }
