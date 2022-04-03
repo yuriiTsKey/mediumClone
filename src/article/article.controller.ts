@@ -86,8 +86,11 @@ export class ArticleController {
 
   @Post(':slug/favorites')
   @UseGuards(AuthGuard)
-  async addArticleToFavorite(@Param('slug') slug: string): Promise<any> {
-    return 'yes';
+  async addArticleToFavorite(
+    @UserDecorator('id') userId: number,
+    @Param('slug') slug: string,
+  ): Promise<ArticleResponseInterface> {
+    return this.articleService.addArticleToFavorite(userId, slug);
   }
 
   @Get('slug')
