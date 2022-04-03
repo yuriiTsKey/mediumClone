@@ -11,17 +11,18 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { DeleteResult, Repository } from 'typeorm';
-import { ArticleEntity } from './article.entity';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/createArticle.dto';
 import { UpdateArticleDto } from './dto/updateArticle.dto';
 import { ArticleResponseInterface } from './types/articleResponse.interface';
 import { ArticlesResponseInterface } from './types/articlesResponse.interface';
+import { Request } from 'express';
 
 @Controller('articles')
 export class ArticleController {
@@ -90,7 +91,10 @@ export class ArticleController {
   }
 
   @Get('slug')
-  getSlug() {
-    return this.articleService.processSlugUnique('Stringa');
+  async getSlug(@Req() req: Request) {
+    const res = await this.articleService.processSlugUnique('Stringa');
+    console.log(res);
+    console.log(req);
+    return res;
   }
 }
