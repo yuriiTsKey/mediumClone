@@ -93,6 +93,15 @@ export class ArticleController {
     return this.articleService.addArticleToFavorite(userId, slug);
   }
 
+  @Delete(':slug/favorites')
+  @UseGuards(AuthGuard)
+  async removeArticleFromFavorite(
+    @UserDecorator('id') userId: number,
+    @Param('slug') slug: string,
+  ) {
+    return this.articleService.removeFromFavorites(userId, slug);
+  }
+
   @Get('slug')
   async getSlug(@Req() req: Request) {
     const res = await this.articleService.processSlugUnique('Stringa');

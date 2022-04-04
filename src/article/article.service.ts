@@ -145,6 +145,7 @@ export class ArticleService {
   buildArticleResponse(article: ArticleEntity) {
     return { article };
   }
+
   async addArticleToFavorite(userId: number, slug: string): Promise<any> {
     const article = await this.getArticleBySlug(slug);
     const user = await this.userRepository.findOne(userId, {
@@ -163,8 +164,10 @@ export class ArticleService {
       await this.articleRepository.save(article);
     }
 
-    console.log(user);
+    return article;
   }
+
+  async removeFromFavorites(userId: number, slug: string): Promise<any> {}
 
   processSlugUnique(title: string): string {
     const slugString = ((Math.random() * Math.pow(36, 6)) | 0).toString(36);
