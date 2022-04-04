@@ -40,12 +40,24 @@ export class ArticleService {
       });
     }
 
+    //by tag
     if (query.tag) {
       queryBuilder.andWhere('articles.tagList LIKE :tag', {
         tag: `%${query.tag}%`,
       });
     }
 
+    //limit
+    if (query.limit) {
+      queryBuilder.limit(query.limit);
+    }
+
+    //offset
+    if (query.offset) {
+      queryBuilder.offset(query.offset);
+    }
+
+    //by favorited
     if (query.favorited) {
       const author = await this.userRepository.findOne(
         {
@@ -63,16 +75,21 @@ export class ArticleService {
       }
     }
 
-    if (query.limit) {
-      queryBuilder.limit(query.limit);
-    }
-    if (query.offset) {
-      queryBuilder.offset(query.offset);
+    let favoritedIds: number[] = [];
+    if (currentUserId) {
+      const currentUser = await this.userRepository.findOne(currentUserId, {
+        relations: ['favorites'],
+      });
+      favoritedIds = currentUser.favorites.map((favorite) => favorite.id);
     }
 
     const articles = await queryBuilder.getMany();
+    const articlesWithFavorites = articles.map((article) => {
+      const favorited = favoritedIds.includes(article.id);
+      return { ...article, favorited };
+    }); //!cannot get favorited(true|false)
 
-    return { articles, articleCount };
+    return { articles: articlesWithFavorites, articleCount };
   }
 
   async createArticle(
