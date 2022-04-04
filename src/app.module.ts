@@ -9,6 +9,7 @@ import ormconfig from '@app/ormconfig';
 import { UserModule } from './user/user.module';
 import { AuthMiddleware } from './user/middleware/auth.middleware';
 import { ArticleModule } from './article/article.module';
+import { ProfileModule } from './profile/profile.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ArticleModule } from './article/article.module';
     TagModule,
     UserModule,
     ArticleModule,
+    ProfileModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
