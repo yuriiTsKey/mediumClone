@@ -23,6 +23,7 @@ import { UpdateArticleDto } from './dto/updateArticle.dto';
 import { ArticleResponseInterface } from './types/articleResponse.interface';
 import { ArticlesResponseInterface } from './types/articlesResponse.interface';
 import { Request } from 'express';
+import { ArticleEntity } from './article.entity';
 
 @Controller('articles')
 export class ArticleController {
@@ -89,7 +90,7 @@ export class ArticleController {
   async addArticleToFavorite(
     @UserDecorator('id') userId: number,
     @Param('slug') slug: string,
-  ): Promise<ArticleResponseInterface> {
+  ): Promise<ArticleEntity> {
     return this.articleService.addArticleToFavorite(userId, slug);
   }
 
@@ -98,7 +99,7 @@ export class ArticleController {
   async removeArticleFromFavorite(
     @UserDecorator('id') userId: number,
     @Param('slug') slug: string,
-  ) {
+  ): Promise<ArticleEntity> {
     return this.articleService.removeFromFavorites(userId, slug);
   }
 

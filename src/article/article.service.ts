@@ -46,6 +46,16 @@ export class ArticleService {
       });
     }
 
+    if (query.favorited) {
+      const author = await this.userRepository.findOne(
+        {
+          username: query.favorited,
+        },
+        { relations: ['favorites'] },
+      );
+      console.log('author', author);
+    }
+
     if (query.limit) {
       queryBuilder.limit(query.limit);
     }
@@ -151,6 +161,7 @@ export class ArticleService {
     const user = await this.userRepository.findOne(userId, {
       relations: ['favorites'],
     });
+    console.log('user', user);
     //!Check if post is liked
     const isNotFavorited =
       user.favorites.findIndex(
@@ -167,7 +178,28 @@ export class ArticleService {
     return article;
   }
 
-  async removeFromFavorites(userId: number, slug: string): Promise<any> {}
+  async removeFromFavorites(
+    userId: number,
+    slug: string,
+  ): Promise<ArticleEntity> {
+    const article = await this.getArticleBySlug(slug);
+    const user = await this.userRepository.findOne(userId, {
+      relations: ['favorites'],
+    });
+
+    const articleIndex = user.favorites.findIndex(
+      (articleInFavorites) => articleInFavorites.id === article.id,
+    );
+
+    if (articleIndex >= 0) {
+      user.favorites.splice(articleIndex, 1);
+      article.favoritesCount -= 1;
+      await this.userRepository.save(user);
+      await this.articleRepository.save(article);
+    }
+
+    return article;
+  }
 
   processSlugUnique(title: string): string {
     const slugString = ((Math.random() * Math.pow(36, 6)) | 0).toString(36);
