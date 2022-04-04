@@ -35,7 +35,7 @@ export class ArticleController {
     @UserDecorator('id') currentUserId: number,
     @Query() query: any,
   ): Promise<ArticlesResponseInterface> {
-    return this.articleService.getAllArticle(currentUserId, query);
+    return this.articleService.getAllArticle(query, currentUserId);
   }
 
   @Post('create')

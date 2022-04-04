@@ -23,7 +23,7 @@ export class ArticleService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async getAllArticle(currentUserId: number, query: any): Promise<any> {
+  async getAllArticle(query: any, currentUserId: number): Promise<any> {
     const queryBuilder = getRepository(ArticleEntity)
       .createQueryBuilder('articles')
       .leftJoinAndSelect('articles.author', 'author');
@@ -53,7 +53,14 @@ export class ArticleService {
         },
         { relations: ['favorites'] },
       );
-      console.log('author', author);
+      console.log('Author', author);
+      const ids = author.favorites.map((el) => el.id);
+      if (ids.length > 0) {
+        //!NotWork
+        queryBuilder.andWhere('articles.authorId IN (:...ids)', { ids });
+      } else {
+        queryBuilder.andWhere('1=0');
+      }
     }
 
     if (query.limit) {
