@@ -24,7 +24,8 @@
     "db:drop": "npm run typeorm schema:drop",
     "db:generate": "npm run typeorm migration:generate -- -n",
     "db:migrate": "npm run typeorm migration:run",
-    "db:revert": "npm run typeorm migration:revert"
+    "db:revert": "npm run typeorm migration:revert",
+    "db:seed": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js --config src/ormseedconfig.ts migration:run"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
@@ -89,6 +90,6 @@
     "testEnvironment": "node"
   },
   "_moduleAliases": {
-    "@app": "./dist/"
+    "@app": "./dist"
   }
 }
